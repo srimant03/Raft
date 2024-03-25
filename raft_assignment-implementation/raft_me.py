@@ -339,7 +339,7 @@ class RaftNode:
                 self.renew_lease()
             time.sleep(self.heartbeat_interval) 
 
-        def renew_lease(self):
+    def renew_lease(self):
         self.lease_expiration_time = time.time() + self.lease_duration
 
     def redirect_to_leader(self, msg, conn):
