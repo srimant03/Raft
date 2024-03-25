@@ -18,7 +18,7 @@ signal.signal(signal.SIGINT, signal.SIG_DFL)
 class RaftDatabase:
     def __init__(self, node_id):
         self.node_id = node_id
-        self.logs_dir = f'logs_node_{node_id}'
+        self.logs_dir = f"logs_node{node_id.split(':')[1]}"
         self.metadata_file = f'metadata.txt'
         self.logs_file = f'logs.txt'
         self.dump_file = f'dump.txt'
