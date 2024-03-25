@@ -179,7 +179,9 @@ class RaftNode:
         self.cluster_index = -1
         self.server_index = -1
         self.node_id = f'{ip}:{port}'
-
+        self.lease_duration = 5 
+        self.lease_expiration_time = 0
+        self.heartbeat_interval=1
         for i in range(len(self.partitions)):
             cluster = self.partitions[i]
             print(cluster)
@@ -217,6 +219,8 @@ class RaftNode:
         utils.run_thread(func=self.on_election_timeout, args=())
         print("hi")
         utils.run_thread(func=self.leader_send_append_entries, args=())
+        utils.run_thread(func=self.lease_expiry_monitor, args=())
+
     
     def get_leader(self):
         return self.leader_id
@@ -227,7 +231,10 @@ class RaftNode:
             self.election_timeout = timeout
         else:
             self.election_timeout = time.time() + randint(self.election_period_ms, 2*self.election_period_ms)/1000
-
+    def lease_expiry_monitor(self):
+        while True:
+            self.check_lease_and_step_down()
+            time.sleep(1)  
     def on_election_timeout(self):
         print("Election timeout....")   
         while True:
@@ -276,6 +283,7 @@ class RaftNode:
         self.current_term = term
         self.voted_for = -1
         self.set_election_timeout()
+        self.lease_expiration_time=0;
 
     def process_vote_request(self, server, term, last_term, last_index):
         print(f"Processing vote request from {server}...")
@@ -310,16 +318,52 @@ class RaftNode:
             print(f"{self.votes}-{self.current_term}")
         print(f"pvr4")
 
+    # def leader_send_append_entries(self):
+    #     print("Sending append entries....")
+    #     while True:
+    #         if self.state == 'LEADER':
+    #             self.append_entries()
+    #             last_index, _ = self.commit_log.get_last_index_term()
+    #             self.commit_index = last_index
+    #             #wait for 1 second before sending the next append entries
+    #             time.sleep(1)
     def leader_send_append_entries(self):
-        print("Sending append entries....")
-        while True:
-            if self.state == 'LEADER':
-                self.append_entries()
-                last_index, _ = self.commit_log.get_last_index_term()
-                self.commit_index = last_index
-                #wait for 1 second before sending the next append entries
-                time.sleep(1)
-    
+        while self.state == 'LEADER':
+            ack_count = 1  
+            for i, server in enumerate(self.cluster[self.cluster_index]):
+                if i != self.server_index:
+                    success = self.send_append_entries_request(server)
+                    if success:
+                        ack_count += 1
+            if ack_count > len(self.cluster[self.cluster_index]) // 2:
+                self.renew_lease()
+            time.sleep(self.heartbeat_interval) 
+
+        def renew_lease(self):
+        self.lease_expiration_time = time.time() + self.lease_duration
+
+    def redirect_to_leader(self, msg, conn):
+        if self.leader_id is not None:
+            leader_ip, leader_port = self.conns[self.cluster_index][self.leader_id]
+        else:
+            print("Leader ID is not known.")
+            return "Error: Leader ID is not known."
+
+        context = zmq.Context()
+        socket = context.socket(zmq.REQ)
+        try:
+            socket.connect(f"tcp://{leader_ip}:{leader_port}")
+            message = ','.join(msg)
+            socket.send_string(message)
+            response = socket.recv_string()
+            return response
+        except Exception as e:
+            print(f"Error redirecting request to leader: {e}")
+            return "Error redirecting request to leader."
+        finally:
+            socket.close()
+    def is_lease_valid(self):
+        return time.time() < self.lease_expiration_time
     def append_entries(self):
         res = Queue()
         for i in range(len(self.partitions[self.cluster_index])):
@@ -417,7 +461,6 @@ class RaftNode:
                 #print("hi from else part")
                 self.next_index[server] = max(0, self.next_index[server] - 1)
                 self.send_append_entries_request(server)
-    
     def store_entries(self, prev_idx, leader_logs):
         print(leader_logs)
         commands = []
@@ -433,7 +476,14 @@ class RaftNode:
             self.update_state_machine(command)
         
         return last_index
-    
+    def check_lease_and_step_down(self):
+        if self.state == 'LEADER' and not self.is_lease_valid():
+            print("Leader lease expired. Stepping down.")
+            self.state = 'FOLLOWER'
+            self.leader_id = None
+            self.voted_for = None
+            self.set_election_timeout()
+            self.start_election()
     def update_state_machine(self, command):     #correct this
         print("updating state machine....")
         print(command)
@@ -503,11 +553,17 @@ class RaftNode:
             else:
                 socket.send_multipart([b'Not a leader.'])
         elif msg[0] == 'GET':
-            key = conn[1].decode('utf-8')
-            value = self.database.get(key)
-            socket.send_multipart([value.encode('utf-8')])
-        else:
-            socket.send_multipart([b'Invalid request....'])
+            if self.state == 'LEADER' and self.is_lease_valid():
+                key = conn[1].decode('utf-8')
+                value = self.database.get(key)
+                socket.send_multipart([value.encode('utf-8')])
+            elif self.state == 'LEADER':
+                response = self.redirect_to_leader(msg, conn)
+                socket.send_string(response)
+
+            else:
+                socket.send_multipart([b'Leader cannot process GET request.'])
+
 
     def process_requests(self, conn, socket):
         while True:
