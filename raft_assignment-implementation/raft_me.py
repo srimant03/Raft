@@ -314,6 +314,7 @@ class RaftNode:
             print(f"pvr3")
             self.state = 'LEADER'
             self.leader_id = self.server_index
+            self.renew_lease()
             print(f"{self.cluster_index}-{self.server_index} is the leader....")
             print(f"{self.votes}-{self.current_term}")
         print(f"pvr4")
@@ -328,23 +329,34 @@ class RaftNode:
     #             #wait for 1 second before sending the next append entries
     #             time.sleep(1)
     def leader_send_append_entries(self):
-        while self.state == 'LEADER':
-            ack_count = 1  
-            for i, server in enumerate(self.cluster[self.cluster_index]):
-                if i != self.server_index:
-                    success = self.send_append_entries_request(server)
-                    if success:
-                        ack_count += 1
-            if ack_count > len(self.cluster[self.cluster_index]) // 2:
-                self.renew_lease()
-            time.sleep(self.heartbeat_interval) 
+        with open('data.txt', 'w') as f:
+                f.write(f'abe chal{self.state}')
+        while True:
+            with open('data.txt', 'w') as f:
+                f.write(f'bol bhai{self.state}')
+            if self.state == 'LEADER':
+                ack_count = 1  
+                for i, server in enumerate(self.cluster[self.cluster_index]):
+                    if i != self.server_index:
+                        success = self.send_append_entries_request(server)
+                        if success:
+                            ack_count += 1
+                if ack_count > len(self.cluster[self.cluster_index]) // 2:
+                    self.renew_lease()
+                time.sleep(self.heartbeat_interval) 
 
     def renew_lease(self):
         self.lease_expiration_time = time.time() + self.lease_duration
 
     def redirect_to_leader(self, msg, conn):
         if self.leader_id is not None:
-            leader_ip, leader_port = self.conns[self.cluster_index][self.leader_id]
+            for i in range(len(self.partitions)):
+                cluster = self.partitions[i]
+                print(cluster)
+                for j in range(len(cluster)):
+                    print(cluster[j])
+                    leader_ip, leader_port = cluster[j].split(':')
+                    leader_port=int(leader_port)
         else:
             print("Leader ID is not known.")
             return "Error: Leader ID is not known."
@@ -429,7 +441,7 @@ class RaftNode:
             self.leader_id = server
             self_logs = self.commit_log.read_logs_start_end(prev_idx, prev_idx) if prev_idx != -1 else []
 
-            success = prev_idx == -1 or (len(self_logs) > 0 and self_logs[0][0] == prev_term)
+            success = prev_idx == -1 or (len(self_logs) > 0 and int(self_logs[0][0]) == prev_term)
 
             if success:
                 last_index, last_term = self.commit_log.get_last_index_term()
@@ -554,15 +566,19 @@ class RaftNode:
                 socket.send_multipart([b'Not a leader.'])
         elif msg[0] == 'GET':
             if self.state == 'LEADER' and self.is_lease_valid():
+                with open('data2.txt', 'w') as f:
+                    f.write('LEADER')
                 key = conn[1].decode('utf-8')
                 value = self.database.get(key)
                 socket.send_multipart([value.encode('utf-8')])
-            elif self.state == 'LEADER':
+            else:
+                with open('data2.txt', 'w') as f:
+                    f.write(f'abe bhai{self.state}')
                 response = self.redirect_to_leader(msg, conn)
                 socket.send_string(response)
 
-            else:
-                socket.send_multipart([b'Leader cannot process GET request.'])
+            # else:
+            #     socket.send_multipart([b'Leader cannot process GET request.'])
 
 
     def process_requests(self, conn, socket):
