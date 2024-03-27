@@ -12,6 +12,7 @@ import datetime
 from queue import Queue
 import traceback
 from datetime import datetime
+import re
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
@@ -19,9 +20,8 @@ class RaftDatabase:
     def __init__(self, node_id):
         self.node_id = node_id
         self.logs_dir = f'logs_node_{node_id}'
-        self.metadata_file = f'metadata.txt'
-        self.logs_file = f'logs.txt'
-        self.dump_file = f'dump.txt'
+        self.metadata_file = f'metadata_{node_id}.txt'
+        self.logs_file = f'logs_{node_id}.txt'
 
         if not os.path.exists(self.logs_dir):
             os.makedirs(self.logs_dir)
@@ -95,7 +95,7 @@ class CommitLog:
         self.last_index = -1
     
     def create_file(self):
-        with open(self.file, 'w') as f:
+        with open(self.file, 'a') as f:
             f.write('')
 
     def truncate(self):
@@ -109,7 +109,8 @@ class CommitLog:
     
     def log(self, term, command):
         with open(self.file, 'a') as f:
-            now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            #now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            now = "SET"
             message = f"{now},{term},{command}"
             f.write(f"{message}\n")
             self.last_term = term
@@ -117,29 +118,42 @@ class CommitLog:
         return self.last_index, self.last_term
 
     def log_replace(self, term, commands, start):
+        with open(self.file, 'r') as f:
+            x = []
+            for line in f:
+                line = line.strip().split(",")
+                x.append(line)
+        print(x)
         index = 0
         i = 0
-        with open(self.file, 'r+') as f:
+        with open(self.file, 'a') as f:
             if len(commands) > 0:
                 while i < len(commands):
                     if index >= start:
                         command = commands[i]
                         print(command)
                         i += 1
-                        now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                        #now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                        now = "SET"
                         #split command based on space and join the 2 tokens with a comma like a, b
                         command = command.split(" ")
                         command = ",".join(command)
                         print(command)
                         message = f"{now},{term},{command}"
-                        f.write(f"{message}\n")
-                        
-                        if index > self.last_index:
-                            self.last_term = term
-                            self.last_index = index
+                        #check in x if the message already exists
+                        flag = 0
+                        for j in range(len(x)):
+                            if str(x[j][2]) == str(command.split(",")[0]) and str(x[j][3]) == str(command.split(",")[1]):
+                                flag = 1
+                                break
+                        if flag == 0:
+                            f.write(f"{message}\n")
+                            if index > self.last_index:
+                                self.last_term = term
+                                self.last_index = index
                     
                     index += 1
-                f.truncate()
+                #f.truncate()
         return self.last_index, self.last_term
     
     def read_log(self):
@@ -179,6 +193,11 @@ class RaftNode:
         self.cluster_index = -1
         self.server_index = -1
         self.node_id = f'{ip}:{port}'
+        self.dump_file = f'dump_{self.node_id}.txt'
+
+        #create the dump file if it does not exist
+        with open(self.dump_file, 'a') as f:
+            f.write('')
 
         for i in range(len(self.partitions)):
             cluster = self.partitions[i]
@@ -318,7 +337,7 @@ class RaftNode:
                 last_index, _ = self.commit_log.get_last_index_term()
                 self.commit_index = last_index
                 #wait for 1 second before sending the next append entries
-                time.sleep(1)
+                time.sleep(3)
     
     def append_entries(self):
         res = Queue()
@@ -339,7 +358,9 @@ class RaftNode:
     def send_append_entries_request(self, server, res=None):
         print(f"Sending append entries request to {server}....")
         prev_idx = self.next_index[server] - 1
+        print("Prev_idx ",prev_idx)
         log_slice = self.commit_log.read_logs_start_end(prev_idx)
+        print("Log_slice ",log_slice)
 
         if prev_idx == -1:
             prev_term = 0
@@ -359,12 +380,15 @@ class RaftNode:
             if self.state == 'LEADER':
                 ip, port = self.conns[self.cluster_index][server]
                 resp = utils.send_and_recv_no_retry(msg, ip, port, timeout=self.rpc_period_ms/1000)
+                print(resp, "hi")
                 if resp:
                     resp = resp.split(',')
                     server = int(resp[1])
                     curr_term = int(resp[2])
                     success = bool(resp[3])
                     index = int(resp[4])
+                    with(open("data.txt", "a")) as f:
+                        f.write("hi-append")
                     self.process_append_reply(server, curr_term, success, index)
                     break
             else:
@@ -384,14 +408,14 @@ class RaftNode:
         if term == self.current_term:
             self.leader_id = server
             self_logs = self.commit_log.read_logs_start_end(prev_idx, prev_idx) if prev_idx != -1 else []
-
-            success = prev_idx == -1 or (len(self_logs) > 0 and self_logs[0][0] == prev_term)
+            if len(self_logs) > 0:
+                print(self_logs[0][0])
+                print(prev_term)
+            success = prev_idx == -1 or (len(self_logs) > 0 and int(self_logs[0][0]) == prev_term)
 
             if success:
                 last_index, last_term = self.commit_log.get_last_index_term()
                 print(logs)
-                #logs is a list of dictionaries with first element as term and second element as command
-                #take last element of logs which is a dictionary and get the key of that dictionary
                 print(logs[-1].keys() if len(logs) > 0 else 0)
                 if len(logs) > 0:
                     for key in logs[-1].keys():
@@ -414,7 +438,6 @@ class RaftNode:
             if success:
                 self.next_index[server] = index + 1
             else:
-                #print("hi from else part")
                 self.next_index[server] = max(0, self.next_index[server] - 1)
                 self.send_append_entries_request(server)
     
@@ -451,6 +474,7 @@ class RaftNode:
 
     def handle_requests(self, msg, conn, socket):
         print(f"Handling requests....")
+        msg1 = msg
         msg = msg.split(',')
         if msg[0] == 'RequestVote':
             term = int(msg[1])
@@ -471,8 +495,12 @@ class RaftNode:
             term = int(msg[2])
             prev_idx = int(msg[3])
             prev_term = int(msg[4])
-            logs = eval(msg[5])
-            commit_index = int(msg[6])
+            match = re.search(r'\[.*?\]', msg1)
+            if match:
+                extracted_part = match.group(0)
+                print(extracted_part)
+            logs = eval(extracted_part)
+            commit_index = int(msg[-1])
             output = self.process_append_requests(server, term, prev_idx, prev_term, logs, commit_index)
             socket.send_multipart([output.encode('utf-8')])
         elif msg[0] == 'APPEND-REP':
@@ -498,7 +526,7 @@ class RaftNode:
                 self.update_state_machine(command)
                 print("updated state machine")
                 # Send AppendEntries to all other nodes
-                self.append_entries()
+                #self.append_entries()
                 socket.send_multipart([b'Successfully set key-value pair.'])
             else:
                 socket.send_multipart([b'Not a leader.'])
@@ -543,7 +571,7 @@ class RaftNode:
 if __name__ == "__main__":
     #ip, port, partitions = sys.argv[1], int(sys.argv[2]), sys.argv[3]
     ip, port = sys.argv[1], int(sys.argv[2])
-    partitions = "[['127.0.0.1:5001', '127.0.0.1:5002', '127.0.0.1:5003'], ['127.0.0.1:5004', '127.0.0.1:5005', '127.0.0.1:5006']]"
+    partitions = "[['127.0.0.1:5001', '127.0.0.1:5002', '127.0.0.1:5003','127.0.0.1:5004','127.0.0.1:5005']]"
     raft = RaftNode(ip, port, partitions)
     utils.run_thread(func=raft.init, args=())
     raft.listen_to_client()
