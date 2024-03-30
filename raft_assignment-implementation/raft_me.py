@@ -56,6 +56,7 @@ class RaftDatabase:
             f.write(self.metadata_dic)
             
     def append_log(self, map):
+        
         with open(self.logs_file, 'w') as f:
             #write each key and its corresponding value from the map in the logs file
             for key, value in map.items():
@@ -252,6 +253,8 @@ class RaftNode:
         while True:
             if time.time() > self.election_timeout and (self.state == 'FOLLOWER' or self.state == 'CANDIDATE'):
                 print("Timeout....")
+                with open(self.dump_file, 'a') as f:
+                    f.write(f'Node {self.node_id} election timer timed out, Starting election.\n')
                 self.set_election_timeout()
                 self.start_election()
     
@@ -290,6 +293,9 @@ class RaftNode:
                 break
     
     def step_down(self, term):
+        if(self.state=='LEADER'):
+            with open(self.dump_file, 'a') as f:
+                f.write(f'{self.node_id} Stepping down\n')
         print(f"Stepping down....")
         self.state = 'FOLLOWER'
         self.current_term = term
@@ -307,6 +313,11 @@ class RaftNode:
             self.voted_for = server
             self.state = 'FOLLOWER'
             self.set_election_timeout()
+            with open(self.dump_file, 'a') as f:
+                f.write(f'Vote granted for Node {server} in term {self.node_id}.\n')
+        else:
+            with open(self.dump_file, 'a') as f:
+                f.write(f'Vote denied for Node {server} in term {self.node_id}.\n')
 
         return f'VOTE-REP,{self.server_index},{self.current_term},{self.voted_for}'
     
@@ -322,6 +333,8 @@ class RaftNode:
                 print(f"pvr2.1")
                 self.votes.add(server)
         if (len(self.votes) > len(self.partitions[self.cluster_index])//2):
+            with open(self.dump_file, 'a') as f:
+                f.write(f'Node {self.node_id} became the leader for term {self.current_term}\n')
             print(f"pvr3")
             self.state = 'LEADER'
             self.leader_id = self.server_index
@@ -333,6 +346,8 @@ class RaftNode:
         print("Sending append entries....")
         while True:
             if self.state == 'LEADER':
+                with open(self.dump_file, 'a') as f:
+                    f.write(f'Leader {self.node_id} sending heartbeat & Renewing Lease\n')
                 self.append_entries()
                 last_index, _ = self.commit_log.get_last_index_term()
                 self.commit_index = last_index
@@ -351,7 +366,10 @@ class RaftNode:
                 res.get(block=True)
                 cnts += 1
                 if cnts >= len(self.partitions[self.cluster_index])//2:
+                    with open(self.dump_file, 'a') as f:
+                        f.write(f'Leader {self.node_id} lease renewal Successssful\n')
                     return
+                    
         else:
             return
 
@@ -387,6 +405,9 @@ class RaftNode:
                     curr_term = int(resp[2])
                     success = bool(resp[3])
                     index = int(resp[4])
+                    if(resp==None):
+                        with open(self.dump_file, 'a') as f:
+                            f.write(f'Error occurred while sending RPC to Node {ip}:{port}\n')
                     with(open("data.txt", "a")) as f:
                         f.write("hi-append")
                     self.process_append_reply(server, curr_term, success, index)
@@ -420,13 +441,18 @@ class RaftNode:
                 if len(logs) > 0:
                     for key in logs[-1].keys():
                         a = key
+                with open(self.dump_file, 'a') as f:
+                    f.write(f'Node {self.node_id} accepted AppendEntries RPC from {server}.\n')
                 if len(logs)>0 and last_term == a and last_index == self.commit_index:
                     index = self.commit_index
                 else:
                     index = self.store_entries(prev_idx,logs)
             
-            flag = 1 if success else 0
+            else:
+                with open(self.dump_file, 'a') as f:
+                    f.write(f'Node {self.node_id} rejected AppendEntries RPC from {server}.\n')
 
+            flag = 1 if success else 0
         return f"APPEND-REP,{self.server_index},{self.current_term},{flag},{index}"
     
     def process_append_reply(self, server, term, success, index):
@@ -470,6 +496,7 @@ class RaftNode:
             command = command.split(' ')
             key = command[0]
             value = command[1]
+        
         self.database.set(key, value)
 
     def handle_requests(self, msg, conn, socket):
@@ -501,6 +528,9 @@ class RaftNode:
                 print(extracted_part)
             logs = eval(extracted_part)
             commit_index = int(msg[-1])
+            
+            with open(self.dump_file, 'a') as f:
+                f.write(f'Node {self.node_id} (follower) committed the entry to the state machine.\n')
             output = self.process_append_requests(server, term, prev_idx, prev_term, logs, commit_index)
             socket.send_multipart([output.encode('utf-8')])
         elif msg[0] == 'APPEND-REP':
@@ -514,6 +544,8 @@ class RaftNode:
             #socket.send_multipart([int(leader)])
             socket.send(str(leader).encode('utf-8'))
         elif msg[0] == 'SET':
+            with open(self.dump_file, 'a') as f:
+                f.write(f'Node {self.node_id} (leader) received a SET request.\n')
             if self.state == 'LEADER':
                 print(msg)
                 key = conn[1].decode('utf-8')
@@ -525,12 +557,16 @@ class RaftNode:
                 # Update the state machine
                 self.update_state_machine(command)
                 print("updated state machine")
+                with open(self.dump_file, 'a') as f:
+                    f.write(f'Node {self.node_id} (leader) committed the entry {command} to the state machine.\n')
                 # Send AppendEntries to all other nodes
                 #self.append_entries()
                 socket.send_multipart([b'Successfully set key-value pair.'])
             else:
                 socket.send_multipart([b'Not a leader.'])
         elif msg[0] == 'GET':
+            with open(self.dump_file, 'a') as f:
+                f.write(f'Node {self.node_id} (leader) received a GET request.\n')
             key = conn[1].decode('utf-8')
             value = self.database.get(key)
             socket.send_multipart([value.encode('utf-8')])

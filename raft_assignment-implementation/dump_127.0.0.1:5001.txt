@@ -1,0 +1,98 @@
+Node 127.0.0.1:5001 election timer timed out, Starting election.
+Vote denied for Node 1 in term 127.0.0.1:5001.
+Node 127.0.0.1:5001 became the leader for term 2
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Node 127.0.0.1:5001 became the leader for term 2
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful
+Leader 127.0.0.1:5001 sending heartbeat & Renewing Lease
+Leader 127.0.0.1:5001 lease renewal Successssful

@@ -1,0 +1,96 @@
+Vote granted for Node 0 in term 127.0.0.1:5003.
+Vote denied for Node 1 in term 127.0.0.1:5003.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
+Node 127.0.0.1:5003 (follower) committed the entry to the state machine.
+Node 127.0.0.1:5003 accepted AppendEntries RPC from 0.
